@@ -25,7 +25,8 @@ Bundle 'terryma/vim-multiple-cursors'
 Bundle 'guns/vim-clojure-static'
 Bundle 'tpope/vim-fireplace'
 Bundle 'jwhitley/vim-matchit'
-
+Bundle 'mattn/emmet-vim'
+Bundle 'astashov/vim-ruby-debugger'
 
 " autoindent with two spaces, always expand tabs
 autocmd BufNewFile,BufReadPost * set ai ts=2 sw=2 sts=2 et
@@ -40,6 +41,7 @@ let delimitMate_expand_space = 1
 let g:nerdtree_tabs_open_on_console_startup = 1
 let g:ctrlp_max_height = 25
 let g:syntastic_check_on_open=1
+let g:ctrlp_show_hidden = 1 " ensure ctrlp lists hidden files "
 
 filetype plugin indent on
 
@@ -67,14 +69,16 @@ set ignorecase smartcase
 set number
 set relativenumber
 set scrolloff=5
-set mouse=a
+set mouse=r
 set laststatus=2 " always show the status bar
 set nocompatible
 set noswapfile
 set nobackup
 set nowritebackup
 set nowrap
+set colorcolumn=85 " show column length hint for long lines
 set backspace=indent,eol,start " allow backspacing over everything in insert mode
+set tags=./tags;~/Projects
 " set clipboard=unnamed
 
 " (Hopefully) removes the delay when hitting esc in insert mode
@@ -83,9 +87,18 @@ set ttimeout
 set ttimeoutlen=1
 
 set showmatch
+set showcmd
 
 set wildmenu
 set wildmode=longest,list
+
+" switch relative line numbers to absolute when Vim is not in focus
+:au FocusLost * :set number
+:au FocusGained * :set relativenumber
+
+" use absolute numbers when in Insert mode
+autocmd InsertEnter * :set number
+autocmd InsertLeave * :set relativenumber
 
 let mapleader=","
 inoremap <c-s> <c-c>:w<CR>
@@ -108,6 +121,8 @@ nmap <leader>gp :exec ':Git push origin ' . fugitive#head()<CR>
 nmap <leader>ghp :exec ':Git push heroku ' . fugitive#head()<CR>
 nmap <leader>bx :!bundle exec<space>
 nmap <leader>zx :!zeus<space>
+nmap <silent> ,/ :nohlsearch<CR> " quickly remove highlighted searches
+
 map <leader>vbi :BundleInstall<CR>
 map <leader>vbu :BundleUpdate<CR>
 
@@ -130,6 +145,15 @@ map <leader>tp :tabp<CR>
 map <leader>tn :tabn<CR>
 
 map <leader>= <C-w>=
+
+" ahoq trailing white space
+:highlight ExtraWhitespace ctermbg=red guibg=red
+:match ExtraWhitespace /\s\+$/
+
+" clear trailing white space across file
+nnoremap <leader>T :%s/\s\+$//<cr>:let @/=''
+
+noremap <leader>ct :!ctagit<CR>
 
 " Emacs-like beginning and end of line.
 imap <c-e> <c-o>$
