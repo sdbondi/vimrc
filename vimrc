@@ -33,15 +33,22 @@ autocmd BufNewFile,BufReadPost * set ai ts=2 sw=2 sts=2 et
 
 " check for external file changes
 autocmd CursorHold,CursorMoved,BufEnter * checktime
-
+call pathogen#infect()
 syntax on
-let g:Powerline_symbols = 'fancy'
+
+" let g:Powerline_symbols = 'fancy'
 let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
 let g:nerdtree_tabs_open_on_console_startup = 1
 let g:ctrlp_max_height = 25
 let g:syntastic_check_on_open=1
 let g:ctrlp_show_hidden = 1 " ensure ctrlp lists hidden files "
+let NERDTreeShowHidden=1
+
+" Ruby Debugger
+let g:ruby_debugger_debug_mode = 1
+let g:ruby_debugger_default_script = 'zeus s'
+map <leader>dbs :Rdebugger 'rails s'<CR>
 
 filetype plugin indent on
 
@@ -130,8 +137,8 @@ map <leader>bi :!bundle<CR>
 map <leader>bu :!bundle update<space>
 
 map <leader>vi :tabe ~/.vimrc<CR>
-map <leader>td :tabe ~/Dropbox/todo.txt<CR>
-map <leader>tb :tabe ~/Dropbox/blog.txt<CR>
+map <leader>td :tabe ~/Litterbox/todo.txt<CR>
+map <leader>tb :tabe ~/Litterbox/blog.txt<CR>
 map <leader>vs :source ~/.vimrc<CR>
 
 map <silent> <leader>gs :Gstatus<CR>/not staged<CR>/modified<CR>
@@ -190,6 +197,7 @@ map <leader>rp :!touch tmp/restart.txt<CR><CR>
 " select the current method in ruby (or it block in rspec)
 map <leader>sm /end<CR>?\<def\>\\|\<it\><CR>:noh<CR>V%
 map <leader>sf :e spec/factories/
+map <leader>sbl :!subl .<CR>
 
 " j and k navigate through wrapped lines
 nmap k gk
