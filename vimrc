@@ -1,55 +1,14 @@
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-Bundle 'gmarik/vundle'
+" Modeline and Notes {
+" " vim: set foldmarker={,} foldlevel=0 foldmethod=marker spell:
+" "
+" "spellThis is the personal .vimrc file of Steve Francia.
+" "FranciaWhile much of it is beneficial for general use, I would
+" "wouldrecommend picking out the parts you want and understand.
+" "
+" "understandYou can find me at http://spf13.com
+" " }"
 
-Bundle 'rking/ag.vim'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'tpope/vim-rails'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-surround'
-Bundle 'Raimondi/delimitMate'
-Bundle 'adamlowe/vim-slurper'
-Bundle 'kien/ctrlp.vim'
-Bundle 'slim-template/vim-slim'
-Bundle 'ervandew/supertab'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'ddollar/nerdcommenter'
-Bundle 'tpope/vim-endwise'
-Bundle 'ecomba/vim-ruby-refactoring'
-Bundle 'scrooloose/syntastic'
-Bundle 'scrooloose/nerdtree'
-Bundle 'godlygeek/tabular'
-Bundle 'Lokaltog/vim-powerline'
-Bundle 'jistr/vim-nerdtree-tabs'
-Bundle 'terryma/vim-multiple-cursors'
-Bundle 'guns/vim-clojure-static'
-Bundle 'tpope/vim-fireplace'
-Bundle 'jwhitley/vim-matchit'
-Bundle 'mattn/emmet-vim'
-Bundle 'astashov/vim-ruby-debugger'
-
-" autoindent with two spaces, always expand tabs
-autocmd BufNewFile,BufReadPost * set ai ts=2 sw=2 sts=2 et
-
-" check for external file changes
-autocmd CursorHold,CursorMoved,BufEnter * checktime
-call pathogen#infect()
-syntax on
-
-" let g:Powerline_symbols = 'fancy'
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
-let g:nerdtree_tabs_open_on_console_startup = 1
-let g:ctrlp_max_height = 25
-let g:syntastic_check_on_open=1
-let g:ctrlp_show_hidden = 1 " ensure ctrlp lists hidden files "
-let NERDTreeShowHidden=1
-
-" Ruby Debugger
-let g:ruby_debugger_debug_mode = 1
-let g:ruby_debugger_default_script = 'zeus s'
-map <leader>dbs :Rdebugger 'rails s'<CR>
-
+" Environment {
 filetype plugin indent on
 
 set t_Co=256
@@ -106,6 +65,62 @@ set wildmode=longest,list
 " use absolute numbers when in Insert mode
 autocmd InsertEnter * :set number
 autocmd InsertLeave * :set relativenumber
+" }
+
+" Bundle setup {
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'gmarik/vundle'
+
+Bundle 'rking/ag.vim'
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-surround'
+Bundle 'Raimondi/delimitMate'
+Bundle 'adamlowe/vim-slurper'
+Bundle 'kien/ctrlp.vim'
+Bundle 'slim-template/vim-slim'
+Bundle 'ervandew/supertab'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'ddollar/nerdcommenter'
+Bundle 'tpope/vim-endwise'
+Bundle 'ecomba/vim-ruby-refactoring'
+Bundle 'scrooloose/syntastic'
+Bundle 'scrooloose/nerdtree'
+Bundle 'godlygeek/tabular'
+Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+Bundle 'jistr/vim-nerdtree-tabs'
+Bundle 'terryma/vim-multiple-cursors'
+Bundle 'guns/vim-clojure-static'
+Bundle 'tpope/vim-fireplace'
+Bundle 'jwhitley/vim-matchit'
+Bundle 'mattn/emmet-vim'
+Bundle 'astashov/vim-ruby-debugger'
+" }
+
+" autoindent with two spaces, always expand tabs
+autocmd BufNewFile,BufReadPost * set ai ts=2 sw=2 sts=2 et
+
+" check for external file changes
+autocmd CursorHold,CursorMoved,BufEnter * checktime
+call pathogen#infect()
+syntax on
+
+" let g:Powerline_symbols = 'fancy'
+let delimitMate_expand_cr = 1
+let delimitMate_expand_space = 1
+let g:nerdtree_tabs_open_on_console_startup = 1
+let g:ctrlp_max_height = 25
+let g:syntastic_check_on_open=1
+let g:ctrlp_show_hidden = 1 " ensure ctrlp lists hidden files "
+let NERDTreeShowHidden=1
+
+" Ruby Debugger
+let g:ruby_debugger_debug_mode = 1
+let g:ruby_debugger_default_script = 'zeus s'
+let g:ruby_debugger_progname = 'vim'
+map <leader>dbs :Rdebugger 'rails s'<CR>
 
 let mapleader=","
 inoremap <c-s> <c-c>:w<CR>
@@ -117,9 +132,11 @@ nmap <silent> <c-j> :wincmd j<CR>
 nmap <silent> <c-h> :wincmd h<CR>
 nmap <silent> <c-l> :wincmd l<CR>
 
+map <leader>qv :qall<CR>
 map <leader>. :noh<CR>
 map <leader>n :NERDTreeTabsToggle<CR>
 map <leader>ff :NERDTreeFind<CR>
+map <leader>na :!nautilus .<CR><CR>
 
 " paste, fix indentation and clear the mark by default
 nnoremap p p=`]`<esc>
@@ -202,6 +219,10 @@ map <leader>sbl :!subl .<CR>
 " j and k navigate through wrapped lines
 nmap k gk
 nmap j gj
+
+" Open line without going into insert mode
+nmap <S-Enter> O<Esc>
+nmap <CR> o<Esc>
 
 command! Q q " Bind :Q to :q
 command! Qall qall
@@ -287,7 +308,7 @@ function! RunCurrentTestNoZeus()
     call SetTestFile()
   endif
 
-  exec "!rspec" g:bjo_test_file
+  exec "!rspec --color --tty" g:bjo_test_file
 endfunction
 
 function! RunCurrentLineInTestNoZeus()
