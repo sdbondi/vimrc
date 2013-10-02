@@ -28,6 +28,9 @@ let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 set cursorline
 hi CursorLine term=bold cterm=bold ctermbg=233
 
+" Set some nice character listings, then activate list
+" set list listchars=tab:⟶\ ,trail:·,extends:>,precedes:<,nbsp:%
+" set list
 set incsearch
 set hlsearch
 noh " clear the initial highlight after sourcing
@@ -45,12 +48,11 @@ set nowrap
 set colorcolumn=85 " show column length hint for long lines
 set backspace=indent,eol,start " allow backspacing over everything in insert mode
 set tags=./tags;~/Projects
-" set clipboard=unnamed
 
 " (Hopefully) removes the delay when hitting esc in insert mode
 set noesckeys
-set ttimeout
-set ttimeoutlen=1
+" set ttimeout
+" set ttimeoutlen=1
 
 set showmatch
 set showcmd
@@ -97,6 +99,7 @@ Bundle 'tpope/vim-fireplace'
 Bundle 'jwhitley/vim-matchit'
 Bundle 'mattn/emmet-vim'
 Bundle 'astashov/vim-ruby-debugger'
+Bundle 'editorconfig/editorconfig-vim'
 " }
 
 " autoindent with two spaces, always expand tabs
@@ -114,7 +117,10 @@ let g:nerdtree_tabs_open_on_console_startup = 1
 let g:ctrlp_max_height = 25
 let g:syntastic_check_on_open=1
 let g:ctrlp_show_hidden = 1 " ensure ctrlp lists hidden files "
+
+"Nerd tree
 let NERDTreeShowHidden=1
+let NERDTreeWindowSize=40
 
 " Ruby Debugger
 let g:ruby_debugger_debug_mode = 1
@@ -125,6 +131,18 @@ map <leader>dbs :Rdebugger 'rails s'<CR>
 let mapleader=","
 inoremap <c-s> <c-c>:w<CR>
 map <c-s> <c-c>:w<CR>
+
+" Workaround for gnome terminal not sending Alt
+" Map the escape sequences of gnome terminal to
+" the Alt letter combinations.
+let c='a'
+while c <= 'z'
+  exec "set <A-".c.">=\e".c
+  exec "imap \e".c." <A-".c.">"
+  let c = nr2char(1+char2nr(c))
+endwhile
+
+set timeout ttimeoutlen=50
 
 " navigate panes with <c-hhkl>
 nmap <silent> <c-k> :wincmd k<CR>
@@ -141,8 +159,6 @@ map <leader>na :!nautilus .<CR><CR>
 " paste, fix indentation and clear the mark by default
 nnoremap p p=`]`<esc>
 
-nmap <leader>gp :exec ':Git push origin ' . fugitive#head()<CR>
-nmap <leader>ghp :exec ':Git push heroku ' . fugitive#head()<CR>
 nmap <leader>bx :!bundle exec<space>
 nmap <leader>zx :!zeus<space>
 nmap <silent> ,/ :nohlsearch<CR> " quickly remove highlighted searches
@@ -158,10 +174,6 @@ map <leader>td :tabe ~/Litterbox/todo.txt<CR>
 map <leader>tb :tabe ~/Litterbox/blog.txt<CR>
 map <leader>vs :source ~/.vimrc<CR>
 
-map <silent> <leader>gs :Gstatus<CR>/not staged<CR>/modified<CR>
-map <leader>gc :Gcommit<CR>
-map <leader>gw :!git add . && git commit -m "WIP"
-
 map <leader>bn :bn<CR>
 map <leader>bp :bp<CR>
 
@@ -169,6 +181,34 @@ map <leader>tp :tabp<CR>
 map <leader>tn :tabn<CR>
 
 map <leader>= <C-w>=
+
+" Git mappings {
+ " git push
+ nmap <leader>gp :exec ':Git push origin ' . fugitive#head()<CR>
+
+ " git pull
+ nmap <leader>gl :exec ':Git pull origin ' . fugitive#head()<CR>
+
+  " git push to heroku
+  nmap <leader>ghp :exec ':Git push heroku ' . fugitive#head()<CR>
+
+  " git status
+  map <silent> <leader>gs :Gstatus<CR>/not staged<CR>/modified<CR>
+
+  " git commit -am "
+  map <leader>gci :Git commit -am "
+  map <leader>gaci :!git add --all . && git commit -m "
+
+  " git checkout
+  map <leader>gco :Git checkout
+
+  " git diff
+  map <leader>gd :Gdiff<CR>
+
+  " git gui
+  map <leader>ggui :!git cola<CR>
+  map <leader>gw :!git add . && git commit -m "WIP"
+" }
 
 " ahoq trailing white space
 :highlight ExtraWhitespace ctermbg=red guibg=red
@@ -179,9 +219,19 @@ nnoremap <leader>T :%s/\s\+$//<cr>:let @/=''
 
 noremap <leader>ct :!ctagit<CR>
 
+" quickly move lines up and down with <A-J> and <A-K>
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+inoremap <A-j> <Esc>:m .+1<CR>==gi
+inoremap <A-k> <Esc>:m .-2<CR>==gi
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
+
 " Emacs-like beginning and end of line.
 imap <c-e> <c-o>$
 imap <c-a> <c-o>^
+" Allow backwards delete in insert mode
+imap <c-c> <Del>
 
 map <leader>tt :Tabularize /=<CR>
 
@@ -214,7 +264,7 @@ map <leader>rp :!touch tmp/restart.txt<CR><CR>
 " select the current method in ruby (or it block in rspec)
 map <leader>sm /end<CR>?\<def\>\\|\<it\><CR>:noh<CR>V%
 map <leader>sf :e spec/factories/
-map <leader>sbl :!subl .<CR>
+map <leader>sbl :!subl .<CR><CR>
 
 " j and k navigate through wrapped lines
 nmap k gk
@@ -308,7 +358,7 @@ function! RunCurrentTestNoZeus()
     call SetTestFile()
   endif
 
-  exec "!rspec --color --tty" g:bjo_test_file
+  exec "!rspec" g:bjo_test_file
 endfunction
 
 function! RunCurrentLineInTestNoZeus()
