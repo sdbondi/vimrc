@@ -78,6 +78,7 @@ Bundle 'rking/ag.vim'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-abolish'
 Bundle 'tpope/vim-surround'
 Bundle 'Raimondi/delimitMate'
 Bundle 'adamlowe/vim-slurper'
@@ -100,13 +101,19 @@ Bundle 'jwhitley/vim-matchit'
 Bundle 'mattn/emmet-vim'
 Bundle 'astashov/vim-ruby-debugger'
 Bundle 'editorconfig/editorconfig-vim'
+Bundle 'slim-template/vim-slim'
+Bundle 'derekwyatt/vim-scala'
+" }
+"
+" Go syntax {
+
 " }
 
 " autoindent with two spaces, always expand tabs
 autocmd BufNewFile,BufReadPost * set ai ts=2 sw=2 sts=2 et
 
-" check for external file changes
-autocmd CursorHold,CursorMoved,BufEnter * checktime
+" check for external file changes,  and suppress notices from appearing in command line
+autocmd CursorHold,CursorMoved,BufEnter silent * checktime
 call pathogen#infect()
 syntax on
 
@@ -159,6 +166,10 @@ map <leader>na :!nautilus .<CR><CR>
 " paste, fix indentation and clear the mark by default
 nnoremap p p=`]`<esc>
 
+" Copy fullpath to global clipboard
+nmap <leader>fp :let @+ = expand("%")<CR>
+
+
 nmap <leader>bx :!bundle exec<space>
 nmap <leader>zx :!zeus<space>
 nmap <silent> ,/ :nohlsearch<CR> " quickly remove highlighted searches
@@ -181,6 +192,19 @@ map <leader>tp :tabp<CR>
 map <leader>tn :tabn<CR>
 
 map <leader>= <C-w>=
+
+" Quote helpers
+" Insert quotes around word
+map <Leader>q" gewi"<Esc>ea"<Esc>
+map <Leader>q' gewi'<Esc>ea'<Esc>
+" Delete quotes around word
+map <Leader>qd BxEx
+" daW"=substitute(@@,"'\\\|\"","","g")<CR>P
+
+" C++ mappings {
+" Save, compile and run c program
+map <Leader>rc :w<CR> :!clear; make<CR> :!./bin/Debug/%<<CR><CR>
+" }
 
 " Git mappings {
  " git push
@@ -206,7 +230,7 @@ map <leader>= <C-w>=
   map <leader>gd :Gdiff<CR>
 
   " git gui
-  map <leader>ggui :!git cola<CR>
+  map <leader>ggui :!git cola &<CR><CR>
   map <leader>gw :!git add . && git commit -m "WIP"
 " }
 
